@@ -14,10 +14,10 @@ namespace PhoneBookAppCF.DAL
         {
             Database.SetInitializer(new MigrateDatabaseToLatestVersion<PersonContext, Migrations.Configuration>());
         }
-        public DbSet<Person> Person { get; set; }
-        public DbSet<City> City { get; set; }
-        public DbSet<State> State { get; set; }
-        public DbSet<Country> Country { get; set; }
+        public DbSet<Person> Persons { get; set; }
+        public DbSet<City> Cities { get; set; }
+        public DbSet<State> States { get; set; }
+        public DbSet<Country> Countries { get; set; }
 
         
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

@@ -18,7 +18,7 @@ namespace PhoneBookAppCF.Controllers
         // GET: States
         public ActionResult Index()
         {
-            var states = db.State.Include(s => s.Country);
+            var states = db.States.Include(s => s.Country);
             states = states.Where(s => s.IsActive.Equals(true));
             return View(states.ToList());
         }
@@ -30,7 +30,7 @@ namespace PhoneBookAppCF.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            State state = db.State.Find(id);
+            State state = db.States.Find(id);
             if (state == null)
             {
                 return HttpNotFound();
@@ -41,7 +41,7 @@ namespace PhoneBookAppCF.Controllers
         // GET: States/Create
         public ActionResult Create()
         {
-            ViewBag.CountryID = new SelectList(db.Country, "CountryID", "CountryName");
+            ViewBag.CountryID = new SelectList(db.Countries, "CountryID", "CountryName");
             return View();
         }
 
@@ -54,12 +54,12 @@ namespace PhoneBookAppCF.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.State.Add(state);
+                db.States.Add(state);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.CountryID = new SelectList(db.Country, "CountryID", "CountryName", state.CountryID);
+            ViewBag.CountryID = new SelectList(db.Countries, "CountryID", "CountryName", state.CountryID);
             return View(state);
         }
 
@@ -70,12 +70,12 @@ namespace PhoneBookAppCF.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            State state = db.State.Find(id);
+            State state = db.States.Find(id);
             if (state == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.CountryID = new SelectList(db.Country, "CountryID", "CountryName", state.CountryID);
+            ViewBag.CountryID = new SelectList(db.Countries, "CountryID", "CountryName", state.CountryID);
             return View(state);
         }
 
@@ -92,7 +92,7 @@ namespace PhoneBookAppCF.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.CountryID = new SelectList(db.Country, "CountryID", "CountryName", state.CountryID);
+            ViewBag.CountryID = new SelectList(db.Countries, "CountryID", "CountryName", state.CountryID);
             return View(state);
         }
 
@@ -103,7 +103,7 @@ namespace PhoneBookAppCF.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            State state = db.State.Find(id);
+            State state = db.States.Find(id);
             if (state == null)
             {
                 return HttpNotFound();
@@ -116,8 +116,8 @@ namespace PhoneBookAppCF.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            State state = db.State.Find(id);
-            db.State.Remove(state);
+            State state = db.States.Find(id);
+            db.States.Remove(state);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

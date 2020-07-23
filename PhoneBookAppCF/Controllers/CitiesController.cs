@@ -18,7 +18,7 @@ namespace PhoneBookAppCF.Controllers
         // GET: Cities
         public ActionResult Index()
         {
-            var city = db.City.Include(c => c.State);
+            var city = db.Cities.Include(c => c.State);
             city = city.Where(c => c.IsActive.Equals(true));
             return View(city.ToList());
         }
@@ -30,7 +30,7 @@ namespace PhoneBookAppCF.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            City city = db.City.Find(id);
+            City city = db.Cities.Find(id);
             if (city == null)
             {
                 return HttpNotFound();
@@ -41,7 +41,7 @@ namespace PhoneBookAppCF.Controllers
         // GET: Cities/Create
         public ActionResult Create()
         {
-            ViewBag.StateID = new SelectList(db.State, "StateID", "StateName");
+            ViewBag.StateID = new SelectList(db.States, "StateID", "StateName");
             return View();
         }
 
@@ -54,12 +54,12 @@ namespace PhoneBookAppCF.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.City.Add(city);
+                db.Cities.Add(city);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.StateID = new SelectList(db.State, "StateID", "StateName", city.StateID);
+            ViewBag.StateID = new SelectList(db.States, "StateID", "StateName", city.StateID);
             return View(city);
         }
 
@@ -70,12 +70,12 @@ namespace PhoneBookAppCF.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            City city = db.City.Find(id);
+            City city = db.Cities.Find(id);
             if (city == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.StateID = new SelectList(db.State, "StateID", "StateName", city.StateID);
+            ViewBag.StateID = new SelectList(db.States, "StateID", "StateName", city.StateID);
             return View(city);
         }
 
@@ -92,7 +92,7 @@ namespace PhoneBookAppCF.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.StateID = new SelectList(db.State, "StateID", "StateName", city.StateID);
+            ViewBag.StateID = new SelectList(db.States, "StateID", "StateName", city.StateID);
             return View(city);
         }
 
@@ -103,7 +103,7 @@ namespace PhoneBookAppCF.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            City city = db.City.Find(id);
+            City city = db.Cities.Find(id);
             if (city == null)
             {
                 return HttpNotFound();
@@ -116,8 +116,8 @@ namespace PhoneBookAppCF.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            City city = db.City.Find(id);
-            db.City.Remove(city);
+            City city = db.Cities.Find(id);
+            db.Cities.Remove(city);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

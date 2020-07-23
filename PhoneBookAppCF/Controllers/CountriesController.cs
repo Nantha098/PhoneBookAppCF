@@ -19,9 +19,9 @@ namespace PhoneBookAppCF.Controllers
         public ActionResult Index()
         {
             
-            var countries = db.Country.Where(c => c.IsActive.Equals(true));
+            var countries = db.Countries.Where(c => c.IsActive.Equals(true));
 
-            return View(db.Country.ToList());
+            return View(db.Countries.ToList());
         }
 
         // GET: Countries/Details/5
@@ -31,7 +31,7 @@ namespace PhoneBookAppCF.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Country country = db.Country.Find(id);
+            Country country = db.Countries.Find(id);
             if (country == null)
             {
                 return HttpNotFound();
@@ -54,7 +54,7 @@ namespace PhoneBookAppCF.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Country.Add(country);
+                db.Countries.Add(country);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -69,7 +69,7 @@ namespace PhoneBookAppCF.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Country country = db.Country.Find(id);
+            Country country = db.Countries.Find(id);
             if (country == null)
             {
                 return HttpNotFound();
@@ -100,7 +100,7 @@ namespace PhoneBookAppCF.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Country country = db.Country.Find(id);
+            Country country = db.Countries.Find(id);
             if (country == null)
             {
                 return HttpNotFound();
@@ -113,8 +113,8 @@ namespace PhoneBookAppCF.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Country country = db.Country.Find(id);
-            db.Country.Remove(country);
+            Country country = db.Countries.Find(id);
+            db.Countries.Remove(country);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

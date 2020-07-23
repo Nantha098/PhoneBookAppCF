@@ -20,38 +20,37 @@ namespace PhoneBookAppCF.Controllers
         {
             if (!String.IsNullOrEmpty(SearchString))
             {
-                var people = db.Person.Where(p => (p.FirstName.Contains(SearchString) ||
+                var people = db.Persons.Where(p => (p.FirstName.Contains(SearchString) ||
                                                    p.LastName.Contains(SearchString) ||
-                                                   p.PhoneNumber.Contains(SearchString)) &&
-                                                   p.IsActive);
+                                                   p.PhoneNumber.Contains(SearchString))) ;
+                                                  
                 return View(people.ToList());
             }
-            var person = db.Person.Include(p => p.City).Include(p => p.Country).Include(p => p.State);
+            var person = db.Persons.Include(p => p.City).Include(p => p.Country).Include(p => p.State);
             person = person.Where(p => p.IsActive.Equals(true));
             return View(person.ToList());
         }
 
-        // GET: People/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Person person = db.Person.Find(id);
-            if (person == null)
-            {
-                return HttpNotFound();
-            }
-            return View(person);
-        }
 
-        // GET: People/Create
+         // GET: People/Create
         public ActionResult Create()
         {
-            ViewBag.CityID = new SelectList(db.City, "CityID", "CityName");
-            ViewBag.CountryID = new SelectList(db.Country, "CountryID", "CountryName");
-            ViewBag.StateID = new SelectList(db.State, "StateID", "StateName");
+            //ViewBag.CityID = new SelectList(db.City, "CityID", "CityName");
+            //ViewBag.CountryID = new SelectList(db.Country, "CountryID", "CountryName");
+            //ViewBag.StateID = new SelectList(db.State, "StateID", "StateName");
+            //return View();
+            List<Country> country = db.Countries.Where(c => c.IsActive).ToList();
+            List<SelectListItem> li = new List<SelectListItem>();
+            
+
+            foreach (var m in country)
+            {
+
+
+                li.Add(new SelectListItem { Text = m.CountryName, Value = m.CountryID.ToString() });
+                ViewBag.country = li;
+
+            }
             return View();
         }
 
@@ -64,16 +63,82 @@ namespace PhoneBookAppCF.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Person.Add(person);
+                db.Persons.Add(person);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.CityID = new SelectList(db.City, "CityID", "CityName", person.CityID);
-            ViewBag.CountryID = new SelectList(db.Country, "CountryID", "CountryName", person.CountryID);
-            ViewBag.StateID = new SelectList(db.State, "StateID", "StateName", person.StateID);
+            //ViewBag.cityid = new SelectList(db.Cities, "cityid", "cityname", person.CityID);
+            //ViewBag.countryid = new SelectList(db.Countries, "countryid", "countryname", person.CountryID);
+            //ViewBag.stateiD = new SelectList(db.States, "StateID", "StateName", person.StateID);
             return View(person);
         }
+
+        public JsonResult GetState(int id)
+        {
+            var states = db.States.Where(x => x.CountryID == id && x.IsActive).ToList();
+            List<SelectListItem> listates = new List<SelectListItem>();
+
+            listates.Add(new SelectListItem { Text = "--select state--", Value = "0" });
+            if (states != null)
+            {
+                foreach (var x in states)
+                {
+                    listates.Add(new SelectListItem { Text = x.StateName, Value = x.StateID.ToString() });
+
+                }
+
+
+
+            }
+
+
+            return Json(new SelectList(listates, "Value", "Text", JsonRequestBehavior.AllowGet));
+        }
+
+
+        public JsonResult getCity(int id)
+        {
+            var city = db.Cities.Where(c => c.StateID == id && c.IsActive).ToList();
+            List<SelectListItem> licity = new List<SelectListItem>();
+
+            licity.Add(new SelectListItem { Text = "--Select City--", Value = "0" });
+            if (city != null)
+            {
+                foreach (var l in city)
+                {
+                    licity.Add(new SelectListItem { Text = l.CityName, Value = l.CityID.ToString() });
+
+                }
+
+
+
+            }
+
+
+            return Json(new SelectList(licity, "Value", "Text", JsonRequestBehavior.AllowGet));
+        }
+
+
+  
+
+
+// GET: People/Details/5
+public ActionResult Details(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Person person = db.Persons.Find(id);
+            if (person == null)
+            {
+                return HttpNotFound();
+            }
+            return View(person);
+        }
+
+       
 
         // GET: People/Edit/5
         public ActionResult Edit(int? id)
@@ -82,14 +147,29 @@ namespace PhoneBookAppCF.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Person person = db.Person.Find(id);
+            Person person = db.Persons.Find(id);
             if (person == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.CityID = new SelectList(db.City, "CityID", "CityName", person.CityID);
-            ViewBag.CountryID = new SelectList(db.Country, "CountryID", "CountryName", person.CountryID);
-            ViewBag.StateID = new SelectList(db.State, "StateID", "StateName", person.StateID);
+
+            var country = db.Countries.ToList();
+            List<SelectListItem> li = new List<SelectListItem>();
+            li.Add(new SelectListItem { Text = "--Select Country--", Value = "0" });
+
+            foreach (var m in country)
+            {
+
+
+                li.Add(new SelectListItem { Text = m.CountryName, Value = m.CountryID.ToString() });
+                ViewBag.country = li;
+
+            }
+            //return View();
+
+            ViewBag.CityID = new SelectList(db.Cities, "CityID", "CityName", person.CityID);
+            ViewBag.CountryID = new SelectList(db.Countries, "CountryID", "CountryName", person.CountryID);
+            ViewBag.StateID = new SelectList(db.States, "StateID", "StateName", person.StateID);
             return View(person);
         }
 
@@ -106,9 +186,9 @@ namespace PhoneBookAppCF.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.CityID = new SelectList(db.City, "CityID", "CityName", person.CityID);
-            ViewBag.CountryID = new SelectList(db.Country, "CountryID", "CountryName", person.CountryID);
-            ViewBag.StateID = new SelectList(db.State, "StateID", "StateName", person.StateID);
+            ViewBag.CityID = new SelectList(db.Cities, "CityID", "CityName", person.CityID);
+            ViewBag.CountryID = new SelectList(db.Countries, "CountryID", "CountryName", person.CountryID);
+            ViewBag.StateID = new SelectList(db.States, "StateID", "StateName", person.StateID);
             return View(person);
         }
 
@@ -119,7 +199,7 @@ namespace PhoneBookAppCF.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Person person = db.Person.Find(id);
+            Person person = db.Persons.Find(id);
             if (person == null)
             {
                 return HttpNotFound();
@@ -132,8 +212,8 @@ namespace PhoneBookAppCF.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Person person = db.Person.Find(id);
-            db.Person.Remove(person);
+            Person person = db.Persons.Find(id);
+            db.Persons.Remove(person);
             db.SaveChanges();
             return RedirectToAction("Index");
         }
