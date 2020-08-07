@@ -4,6 +4,8 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using PhoneBookAppCF.DAL;
@@ -14,15 +16,27 @@ namespace PhoneBookAppCF.Controllers
     public class CountriesController : Controller
     {
         private PersonContext db = new PersonContext();
-
-        // GET: Countries
-        public ActionResult Index()
+        
+        public async Task<ActionResult> Index()
+    {
+        IEnumerable<Country> countries = null;
+        using (var client = new HttpClient())
         {
-            
-            var countries = db.Countries.Where(c => c.IsActive.Equals(true));
+            try
+            {
+                HttpResponseMessage response = await client.GetAsync("https://localhost:64374/api/Countries");
+                var readTask = await response.Content.ReadAsAsync<IList<Country>>();
+                countries = readTask;
+            }
+            catch (Exception e)
+            {
+                    ViewBag.Error = e.Message;
+                    return View("Error");
 
-            return View(db.Countries.ToList());
+                }
         }
+        return View(countries);
+    }
 
         // GET: Countries/Details/5
         public ActionResult Details(int? id)
